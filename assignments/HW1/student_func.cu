@@ -62,5 +62,5 @@ void your_rgba_to_greyscale(const uchar4 *const h_rgbaImage,
                                              numCols);
 
   cudaDeviceSynchronize();
-  checkCudaErrors(cudaGetLastError());
+  // checkCudaErrors(cudaGetLastError());
 }
