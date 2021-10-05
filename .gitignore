@@ -2,3 +2,5 @@ CMakeFiles
 *.cmake
 bin
 build
+
+,vsode
