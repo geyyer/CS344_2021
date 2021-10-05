@@ -21,7 +21,8 @@ if(CUDA_FOUND)
   # to make sure more people can easily run class code without knowing 
   # about this compiler argument
   set(CUDA_NVCC_FLAGS "
-  -ccbin /usr/bin/gcc; 
+  -ccbin /usr/bin/gcc;
+  -gencode;arch=compute_61,code=sm_61; 
   -gencode;arch=compute_70,code=sm_70;  
   -gencode;arch=compute_80,code=sm_80;")
 
