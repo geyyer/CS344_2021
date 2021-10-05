@@ -38,16 +38,15 @@ __global__ void rgba_to_greyscale(const uchar4 *const rgbaImage,
                                   int numRows,
                                   int numCols) {
 
-  int idx_x = blockIdx.x * blockDim.x + threadIdx.x;
-  int idx_y = blockIdx.y * blockDim.y + threadIdx.y;
+  unsigned char r, g, b;
 
-  if (idx_x < numRows && idx_y < numCols) {
-    size_t offset = idx_x * numCols + idx_y;
-    uchar4 rgbaImg = rgbaImage[offset];
-    float pixel = .299f * rgbaImg.x + 
-      .587f * rgbaImg.y + 
-      .114f * rgbaImg.z;
-    greyImage[offset] = pixel;
+  for (int idx = blockIdx.x * blockDim.x + threadIdx.x; 
+    idx < numRows * numCols; 
+    idx += gridDim.x * blockDim.x) {
+    r = rgbaImage[idx].x;
+    g = rgbaImage[idx].y;
+    b = rgbaImage[idx].z;
+    greyImage[idx] = .299f * r + .587f * g + .114f * b;
   }
 }
 
@@ -58,9 +57,10 @@ void your_rgba_to_greyscale(const uchar4 *const h_rgbaImage,
                             size_t numCols) {
   // You must fill in the correct sizes for the blockSize and gridSize
   // currently only one block with one thread is being launched
-  const size_t thread_num = 8;
-  const dim3 blockSize(thread_num, thread_num, 1);
-  const dim3 gridSize(1 + numRows/thread_num, 1 + numCols/thread_num, 1);
+  const size_t pixels = numRows * numCols;
+  const size_t thread_num = 256;
+  const dim3 blockSize(thread_num, 1, 1);
+  const dim3 gridSize((pixels + thread_num - 1) / thread_num, 1);
   printf("Starting execution \n");
   rgba_to_greyscale<<<gridSize, blockSize>>>(d_rgbaImage, 
                                              d_greyImage, 
