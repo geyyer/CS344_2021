@@ -40,9 +40,9 @@ __global__ void rgba_to_greyscale(const uchar4 *const rgbaImage,
 
   unsigned char r, g, b;
 
-  for (int idx = blockIdx.x * blockDim.x + threadIdx.x; 
-    idx < numRows * numCols; 
-    idx += gridDim.x * blockDim.x) {
+  int idx = blockIdx.x * blockDim.x + threadIdx.x;
+
+  if (idx < numRows * numCols) {
     r = rgbaImage[idx].x;
     g = rgbaImage[idx].y;
     b = rgbaImage[idx].z;
@@ -58,7 +58,7 @@ void your_rgba_to_greyscale(const uchar4 *const h_rgbaImage,
   // You must fill in the correct sizes for the blockSize and gridSize
   // currently only one block with one thread is being launched
   const size_t pixels = numRows * numCols;
-  const size_t thread_num = 256;
+  const size_t thread_num = 64;
   const dim3 blockSize(thread_num, 1, 1);
   const dim3 gridSize((pixels + thread_num - 1) / thread_num, 1);
   printf("Starting execution \n");
